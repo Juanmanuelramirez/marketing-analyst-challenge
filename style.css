@@ -1,0 +1,10 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* Custom base styles.
+  Tailwind will handle the rest via CDN in the HTML.
+*/
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8fafc; /* Tailwind 'slate-50' */
+}

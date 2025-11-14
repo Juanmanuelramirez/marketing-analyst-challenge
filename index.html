@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross-Channel Ad Performance</title>
+    
+    <!-- 1. Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. Custom Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- 3. Charting Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    
+    <!-- 
+      4. Main Application Logic 
+      'defer' ensures the script runs after the HTML is parsed
+    -->
+    <script src="app.js" defer></script>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- 
+    ==================================================================
+    STRUCTURE (HTML)
+    This file now only contains the page structure.
+    ==================================================================
+    -->
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="pb-6 border-b border-slate-200">
+            <h1 class="text-3xl font-bold text-slate-900">Senior Marketing Analyst Dashboard</h1>
+            <p class="mt-1 text-lg text-slate-600">Cross-Channel Performance & Data Integrity Analysis</p>
+        </header>
+
+        <!-- Main Metric Container (KPIs) -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 my-8">
+            <!-- Individual KPI Cards -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-sm font-medium text-slate-500">Total Spend</p>
+                <p id="kpi-spend" class="text-3xl font-semibold text-slate-900 mt-1">Loading...</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-sm font-medium text-slate-500">Total Conversions</p>
+                <p id="kpi-conversions" class="text-3xl font-semibold text-slate-900 mt-1">Loading...</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-sm font-medium text-slate-500">Overall CPA</p>
+                <p id="kpi-cpa" class="text-3xl font-semibold text-slate-900 mt-1">Loading...</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-sm font-medium text-slate-500">Tracked Revenue</p>
+                <p id="kpi-revenue" class="text-3xl font-semibold text-slate-900 mt-1">Loading...</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-sm font-medium text-slate-500">Tracked ROAS</p>
+                <p id="kpi-roas" class="text-3xl font-semibold text-slate-900 mt-1">Loading...</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+                <p class="text-sm font-medium text-slate-500">Untracked Spend</p>
+                <p id="kpi-untracked" class="text-3xl font-semibold text-slate-900 mt-1">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 my-8">
+            
+            <!-- Chart 1: Performance by Platform (Doughnut) -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 lg:col-span-1">
+                <h2 class="text-xl font-semibold text-slate-900 mb-4">Spend vs. Conversion Share</h2>
+                <div class="h-80">
+                    <canvas id="platformPerformanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 2: Performance Over Time (Line) -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 lg:col-span-2">
+                <h2 class="text-xl font-semibold text-slate-900 mb-4">Daily Performance Over Time</h2>
+                <div class="h-80">
+                    <canvas id="timeSeriesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 3: Efficiency by Platform (Bar) -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 lg:col-span-2">
+                <h2 class="text-xl font-semibold text-slate-900 mb-4">Efficiency by Platform (CPA & CPC)</h2>
+                <div class="h-96">
+                    <canvas id="efficiencyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Insights Section -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 lg:col-span-1">
+                <h2 class="text-xl font-semibold text-slate-900 mb-4">Senior Analyst Insights</h2>
+                <ul class="space-y-4 text-slate-700">
+                    <li id="insight-1" class="flex items-start">
+                        <span class="mr-3 text-red-500 mt-1 flex-shrink-0">►</span>
+                        <span><strong>Data Quality Alert:</strong> 69.1% of spend ($26.3k) is untracked for revenue. We are optimizing 2/3 of our budget blind. Google's 6.33x ROAS is strong, but we have no visibility on Facebook or TikTok. <strong>Action:</strong> Implementing revenue tracking for FB/TikTok is the #1 priority.</span>
+                    </li>
+                    <li id="insight-2" class="flex items-start">
+                        <span class="mr-3 text-green-500 mt-1 flex-shrink-0">►</span>
+                        <span><strong>The Blended CPA Trap:</strong> Facebook's blended $6.48 CPA is misleading. The hero campaign is `Conversions_Retargeting` ($5.90 CPA). The `Video_Views_Campaign` is 2x more expensive ($12.33 CPA). <strong>Action:</strong> Fund retargeting first. Shift budget from video views to conversion-focused campaigns.</span>
+                    </li>
+                     <li id="insight-3" class="flex items-start">
+                        <span class="mr-3 text-blue-500 mt-1 flex-shrink-0">►</span>
+                        <span><strong>The ROAS King:</strong> The single best campaign in the portfolio is Google's `Shopping_All_Products`. It delivers a massive **7.76x ROAS** at an efficient **$6.18 CPA**. This campaign proves the product/market fit. <strong>Action:</strong> Protect and scale this campaign's budget.</span>
+                    </li>
+                    <li id="insight-4" class="flex items-start">
+                        <span class="mr-3 text-gray-600 mt-1 flex-shrink-0">►</span>
+                        <span><strong>Inefficient Scale:</strong> TikTok's `Traffic_Campaign` is the most inefficient campaign in the portfolio ($13.45 CPA), closely followed by its `Awareness_GenZ` campaign ($12.68 CPA). We are paying a premium for untracked scale. <strong>Action:</strong> Audit TikTok's creative and audience, or shift traffic/awareness budget to Google's proven shopping campaign.</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
