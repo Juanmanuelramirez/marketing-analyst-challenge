@@ -82,16 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const unifiedData = await response.json();
 
-            // 2. Data Validation & Cleaning (Simple)
-            // Ensure key metrics are numbers and handle nulls
+            // 2. Data Validation & Cleaning
+            // Convert strings to numbers and dates.
             const cleanedData = unifiedData.map(row => {
-                // Fix for known date inconsistencies in source data
-                let dateStr = row.date;
-                if (dateStr.includes("Gacrux-Light") || dateStr.includes("Enceladus-Light")) {
-                    // Extract the valid date part
-                    dateStr = dateStr.split("-")[0] + "-" + dateStr.split("-")[1] + "-" + dateStr.split("-")[2];
-                }
-
                 return {
                     ...row,
                     impressions: parseInt(row.impressions) || 0,
@@ -99,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     spend: parseFloat(row.spend) || 0,
                     conversions: parseInt(row.conversions) || 0,
                     revenue: parseFloat(row.revenue) || null, // Keep nulls for revenue
-                    date: new Date(dateStr) // Convert date strings to Date objects
+                    date: new Date(row.date) // Convert date strings to Date objects
                 }
             });
 
@@ -116,13 +109,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 return acc;
             }, { spend: 0, conversions: 0, clicks: 0, impressions: 0, revenue: 0, trackedSpend: 0 });
 
-            const overallCPA = totals.spend / totals.conversions;
-            const overallCPC = totals.spend / totals.clicks;
-            const trackedROAS = totals.revenue / totals.trackedSpend;
-            const untrackedSpend = totals.spend - totals.trackedSpend;
-            const untrackedSpendPercent = untrackedSpend / totals.spend;
+            // Data Integrity Check: Calculate true totals from cleaned data
+            // Esto recalculará los números para los insights.
+            const fbData = cleanedData.filter(r => r.platform === 'Facebook');
+            const fbSpend = fbData.reduce((acc, r) => acc + r.spend, 0);
+            const fbConversions = fbData.reduce((acc, r) => acc + r.conversions, 0);
+            const fbCPA = fbSpend / fbConversions; // $7.77
 
-            // 4. Populate KPI Cards
+            const tiktokData = cleanedData.filter(r => r.platform === 'TikTok');
+            const tiktokSpend = tiktokData.reduce((acc, r) => acc + r.spend, 0);
+            const tiktokConversions = tiktokData.reduce((acc, r) => acc + r.conversions, 0);
+            const tiktokCPA = tiktokSpend / tiktokConversions; // $10.08
+
+            const googleData = cleanedData.filter(r => r.platform === 'Google');
+            const googleSpend = googleData.reduce((acc, r) => acc + r.spend, 0);
+            const googleRevenue = googleData.reduce((acc, r) => acc + (r.revenue || 0), 0);
+            const googleROAS = googleRevenue / googleSpend; // 6.33x
+
+            const untrackedSpendTotal = fbSpend + tiktokSpend;
+            const totalSpend = totals.spend;
+            const untrackedSpendPercent = untrackedSpendTotal / totalSpend; // 0.766 -> 76.6%
+
+            // Recalculate deep insights
+            const fbRetargeting = fbData.filter(r => r.campaign_name === 'Conversions_Retargeting');
+            const fbRetargetingSpend = fbRetargeting.reduce((acc, r) => acc + r.spend, 0);
+            const fbRetargetingConversions = fbRetargeting.reduce((acc, r) => acc + r.conversions, 0);
+            const fbRetargetingCPA = fbRetargetingSpend / fbRetargetingConversions; // $6.70
+
+            const fbVideo = fbData.filter(r => r.campaign_name === 'Video_Views_Campaign');
+            const fbVideoSpend = fbVideo.reduce((acc, r) => acc + r.spend, 0);
+            const fbVideoConversions = fbVideo.reduce((acc, r) => acc + r.conversions, 0);
+            const fbVideoCPA = fbVideoSpend / fbVideoConversions; // $13.10
+
+            const googleShopping = googleData.filter(r => r.campaign_name === 'Shopping_All_Products');
+            const googleShoppingSpend = googleShopping.reduce((acc, r) => acc + r.spend, 0);
+            const googleShoppingRevenue = googleShopping.reduce((acc, r) => acc + (r.revenue || 0), 0);
+            const googleShoppingConversions = googleShopping.reduce((acc, r) => acc + r.conversions, 0);
+            const googleShoppingROAS = googleShoppingRevenue / googleShoppingSpend; // 7.76x
+            const googleShoppingCPA = googleShoppingSpend / googleShoppingConversions; // $6.18
+
+            const tiktokTraffic = tiktokData.filter(r => r.campaign_name === 'Traffic_Campaign');
+            const tiktokTrafficSpend = tiktokTraffic.reduce((acc, r) => acc + r.spend, 0);
+            const tiktokTrafficConversions = tiktokTraffic.reduce((acc, r) => acc + r.conversions, 0);
+            const tiktokTrafficCPA = tiktokTrafficSpend / tiktokTrafficConversions; // $13.45
+            
+            const tiktokInfluencer = tiktokData.filter(r => r.campaign_name === 'Influencer_Collab');
+            const tiktokInfluencerSpend = tiktokInfluencer.reduce((acc, r) => acc + r.spend, 0);
+            const tiktokInfluencerConversions = tiktokInfluencer.reduce((acc, r) => acc + r.conversions, 0);
+            const tiktokInfluencerCPA = tiktokInfluencerSpend / tiktokInfluencerConversions; // $9.89
+
+            // 4. Populate KPI Cards (con datos globales)
+            const overallCPA = totals.spend / totals.conversions;
+            const trackedROAS = totals.revenue / totals.trackedSpend;
+
             document.getElementById('kpi-spend').textContent = formatCurrency(totals.spend);
             document.getElementById('kpi-conversions').textContent = formatNumber(totals.conversions);
             document.getElementById('kpi-cpa').textContent = formatCurrencyCents(overallCPA);
@@ -313,6 +352,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
+
+            // 7. Update Insights based on clean calculations
+            document.querySelector('#insight-1 span').innerHTML = `<strong>Data Quality Alert:</strong> ${formatPercent(untrackedSpendPercent)} of spend (${formatCurrency(untrackedSpendTotal)}) is untracked for revenue. We are optimizing 2/3 of our budget blind. Google's ${formatMultiplier(googleROAS)} ROAS is strong, but we have no visibility on Facebook or TikTok. <strong>Action:</strong> Implementing revenue tracking for FB/TikTok is the #1 priority.`;
+            document.querySelector('#insight-2 span').innerHTML = `<strong>The Blended CPA Trap:</strong> Facebook's blended ${formatCurrencyCents(fbCPA)} CPA is misleading. The hero campaign is \`Conversions_Retargeting\` (${formatCurrencyCents(fbRetargetingCPA)} CPA). The \`Video_Views_Campaign\` is 2x more expensive (${formatCurrencyCents(fbVideoCPA)} CPA). <strong>Action:</strong> Fund retargeting first. Shift budget from video views to conversion-focused campaigns.`;
+            document.querySelector('#insight-3 span').innerHTML = `<strong>The ROAS King:</strong> The single best campaign in the portfolio is Google's \`Shopping_All_Products\`. It delivers a massive **${formatMultiplier(googleShoppingROAS)} ROAS** at an efficient **${formatCurrencyCents(googleShoppingCPA)} CPA**. This campaign proves the product/market fit. <strong>Action:</strong> Protect and scale this campaign's budget.`;
+            document.querySelector('#insight-4 span').innerHTML = `<strong>Inefficient Scale:</strong> TikTok's \`Traffic_Campaign\` is the most inefficient campaign in the portfolio (${formatCurrencyCents(tiktokTrafficCPA)} CPA), closely followed by \`Influencer_Collab\` (${formatCurrencyCents(tiktokInfluencerCPA)} CPA). We are paying a premium for untracked scale. <strong>Action:</strong> Audit TikTok's creative and audience, or shift traffic/awareness budget to Google's proven shopping campaign.`;
+
 
         } catch (error) {
             console.error("Failed to initialize dashboard:", error);
