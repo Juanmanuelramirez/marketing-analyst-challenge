@@ -87,7 +87,8 @@
             <!-- Chart 3: Efficiency by Platform (Bar) -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 lg:col-span-3">
                 <h2 class="text-xl font-semibold text-slate-900 mb-4">Efficiency by Platform (CPA & CPC)</h2>
-                <div class="h-96">
+                <!-- UI/UX FIX: Se incrementó la altura mínima (min-h-[28rem]) para dar más espacio al gráfico en vistas móviles -->
+                <div class="h-96 min-h-[28rem]">
                     <canvas id="efficiencyChart"></canvas>
                 </div>
             </div>
@@ -100,38 +101,45 @@
         ==================================================================
         -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mt-6 mb-8">
-            <h2 class="text-xl font-semibold text-slate-900 mb-4">Senior Analyst Insights</h2>
-            
-            <!-- 
-            **UI FIX (Experto)**: 
-            Se eliminó el layout de 'grid' que causaba el traslape.
-            Se reemplazó por un stack vertical simple ('space-y-6').
-            Cada 'li' es ahora 'flex' para alinear el ícono y el texto.
-            El 'span' del texto ahora tiene 'min-w-0' para forzar el ajuste de línea (word wrap) correctamente.
-            -->
-            <ul class="space-y-6 text-slate-700">
-                
-                <li id="insight-1" class="flex items-start">
-                    <span class="mr-3 text-red-500 mt-1 flex-shrink-0">►</span>
-                    <span class="min-w-0"><strong>Data Quality Alert:</strong> 76.6% of spend ($39.5k) is untracked for revenue. We are optimizing 3/4 of our budget blind. Google's 6.33x ROAS is strong, but we have no visibility on Facebook or TikTok. <strong>Action:</strong> Implementing revenue tracking for FB/TikTok is the #1 priority.</span>
-                </li>
-                
-                <li id="insight-2" class="flex items-start">
-                    <span class="mr-3 text-green-500 mt-1 flex-shrink-0">►</span>
-                    <span class="min-w-0"><strong>The Blended CPA Trap:</strong> Facebook's blended $7.77 CPA is misleading. The hero campaign is `Conversions_Retargeting` ($6.70 CPA). The `Video_Views_Campaign` is almost 2x more expensive ($13.10 CPA). <strong>Action:</strong> Fund retargeting first. Shift budget from video views to conversion-focused campaigns.</span>
-                </li>
-                
-                 <li id="insight-3" class="flex items-start">
-                    <span class="mr-3 text-blue-500 mt-1 flex-shrink-0">►</span>
-                    <span class="min-w-0"><strong>The ROAS King:</strong> The single best campaign in the portfolio is Google's `Shopping_All_Products`. It delivers a massive **7.76x ROAS** at an efficient **$6.18 CPA**. This campaign proves the product/market fit. <strong>Action:</strong> Protect and scale this campaign's budget.</span>
-                </li>
-                
-                <li id="insight-4" class="flex items-start">
-                    <span class="mr-3 text-gray-600 mt-1 flex-shrink-0">►</span>
-                    <span class="min-w-0"><strong>Inefficient Scale:</strong> TikTok's `Traffic_Campaign` is the most inefficient campaign in the portfolio ($13.45 CPA), closely followed by `Influencer_Collab` ($9.89 CPA). We are paying a premium for untracked scale. <strong>Action:</strong> Audit TikTok's creative and audience, or shift traffic/awareness budget to Google's proven shopping campaign.</span>
-                </li>
-            </ul>
-        </div>
+          <h2 class="text-xl font-semibold text-slate-900 mb-4">Senior Analyst Insights</h2>
+
+          <ul class="grid grid-cols-1 gap-y-6 text-slate-700">
+              
+              <li id="insight-1" class="grid grid-cols-2 gap-x-3 items-start">
+                  <span class="text-red-500 mt-1 justify-self-start">►</span>
+                  <span class="break-words">
+                      <strong>Data Quality Alert:</strong> 76.6% of spend ($39.5k) is untracked for revenue. We are optimizing 3/4 of our budget blind. Google's 6.33x ROAS is strong, but we have no visibility on Facebook or TikTok.
+                      <strong>Action:</strong> Implementing revenue tracking for FB/TikTok is the #1 priority.
+                  </span>
+              </li>
+              
+              <li id="insight-2" class="grid grid-cols-2 gap-x-3 items-start">
+                  <span class="text-green-500 mt-1 justify-self-start">►</span>
+                  <span class="break-words">
+                      <strong>The Blended CPA Trap:</strong> Facebook's blended $7.77 CPA is misleading. The hero campaign is `Conversions_Retargeting` ($6.70 CPA). The `Video_Views_Campaign` is almost 2x more expensive ($13.10 CPA).
+                      <strong>Action:</strong> Fund retargeting first. Shift budget from video views to conversion-focused campaigns.
+                  </span>
+              </li>
+              
+              <li id="insight-3" class="grid grid-cols-2 gap-x-3 items-start">
+                  <span class="text-blue-500 mt-1 justify-self-start">►</span>
+                  <span class="break-words">
+                      <strong>The ROAS King:</strong> The single best campaign in the portfolio is Google's `Shopping_All_Products`. It delivers a massive <strong>7.76x ROAS</strong> at an efficient <strong>$6.18 CPA</strong>.
+                      <strong>Action:</strong> Protect and scale this campaign's budget.
+                  </span>
+              </li>
+
+              <li id="insight-4" class="grid grid-cols-2 gap-x-3 items-start">
+                  <span class="text-gray-600 mt-1 justify-self-start">►</span>
+                  <span class="break-words">
+                      <strong>Inefficient Scale:</strong> TikTok's `Traffic_Campaign` is the most inefficient campaign in the portfolio ($13.45 CPA), closely followed by `Influencer_Collab` ($9.89 CPA).
+                      <strong>Action:</strong> Audit TikTok's creative and audience, or shift traffic/awareness budget to Google's proven shopping campaign.
+                  </span>
+              </li>
+
+          </ul>
+      </div>
+
 
     </div>
 </body>

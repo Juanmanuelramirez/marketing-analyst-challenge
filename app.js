@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2. Data Validation & Cleaning
             // Convert strings to numbers and dates.
+            // NO se necesita lógica de limpieza de fechas, ya que unified_data.json está limpio.
             const cleanedData = unifiedData.map(row => {
                 return {
                     ...row,
@@ -314,13 +315,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         {
                             label: 'CPA (Cost per Acquisition)',
                             data: platformCPA,
-                            backgroundColor: [COLORS.facebook, COLORS.google, COLORS.tiktok],
+                            // UI/UX FIX: Se usa un solo color. La leyenda de Chart.js
+                            // no puede manejar múltiples colores para un solo dataset.
+                            // backgroundColor: [COLORS.facebook, COLORS.google, COLORS.tiktok],
+                            backgroundColor: 'rgb(59, 130, 246)', // Tailwind Blue-500
                             yAxisID: 'yCPA'
                         },
                         {
                             label: 'CPC (Cost per Click)',
                             data: platformCPC,
-                            backgroundColor: ['#93c5fd', '#fca5a5', '#9ca3af'], // Lighter tones
+                            // UI/UX FIX: Se usa un solo color para la segunda serie.
+                            // backgroundColor: ['#93c5fd', '#fca5a5', '#9ca3af'], // Lighter tones
+                            backgroundColor: 'rgb(156, 163, 175)', // Tailwind Gray-400
                             yAxisID: 'yCPC'
                         }
                     ]
@@ -354,8 +360,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // 7. Update Insights based on clean calculations
-            document.querySelector('#insight-1 span').innerHTML = `<strong>Data Quality Alert:</strong> ${formatPercent(untrackedSpendPercent)} of spend (${formatCurrency(untrackedSpendTotal)}) is untracked for revenue. We are optimizing 2/3 of our budget blind. Google's ${formatMultiplier(googleROAS)} ROAS is strong, but we have no visibility on Facebook or TikTok. <strong>Action:</strong> Implementing revenue tracking for FB/TikTok is the #1 priority.`;
-            document.querySelector('#insight-2 span').innerHTML = `<strong>The Blended CPA Trap:</strong> Facebook's blended ${formatCurrencyCents(fbCPA)} CPA is misleading. The hero campaign is \`Conversions_Retargeting\` (${formatCurrencyCents(fbRetargetingCPA)} CPA). The \`Video_Views_Campaign\` is 2x more expensive (${formatCurrencyCents(fbVideoCPA)} CPA). <strong>Action:</strong> Fund retargeting first. Shift budget from video views to conversion-focused campaigns.`;
+            document.querySelector('#insight-1 span').innerHTML = `<strong>Data Quality Alert:</strong> ${formatPercent(untrackedSpendPercent)} of spend (${formatCurrency(untrackedSpendTotal)}) is untracked for revenue. We are optimizing 3/4 of our budget blind. Google's ${formatMultiplier(googleROAS)} ROAS is strong, but we have no visibility on Facebook or TikTok. <strong>Action:</strong> Implementing revenue tracking for FB/TikTok is the #1 priority.`;
+            document.querySelector('#insight-2 span').innerHTML = `<strong>The Blended CPA Trap:</strong> Facebook's blended ${formatCurrencyCents(fbCPA)} CPA is misleading. The hero campaign is \`Conversions_Retargeting\` (${formatCurrencyCents(fbRetargetingCPA)} CPA). The \`Video_Views_Campaign\` is almost 2x more expensive (${formatCurrencyCents(fbVideoCPA)} CPA). <strong>Action:</strong> Fund retargeting first. Shift budget from video views to conversion-focused campaigns.`;
             document.querySelector('#insight-3 span').innerHTML = `<strong>The ROAS King:</strong> The single best campaign in the portfolio is Google's \`Shopping_All_Products\`. It delivers a massive **${formatMultiplier(googleShoppingROAS)} ROAS** at an efficient **${formatCurrencyCents(googleShoppingCPA)} CPA**. This campaign proves the product/market fit. <strong>Action:</strong> Protect and scale this campaign's budget.`;
             document.querySelector('#insight-4 span').innerHTML = `<strong>Inefficient Scale:</strong> TikTok's \`Traffic_Campaign\` is the most inefficient campaign in the portfolio (${formatCurrencyCents(tiktokTrafficCPA)} CPA), closely followed by \`Influencer_Collab\` (${formatCurrencyCents(tiktokInfluencerCPA)} CPA). We are paying a premium for untracked scale. <strong>Action:</strong> Audit TikTok's creative and audience, or shift traffic/awareness budget to Google's proven shopping campaign.`;
 
